@@ -24,3 +24,5 @@ if not os.environ.get('SECRET_KEY'):
 
 class Config(object):
   SECRET_KEY = os.environ.get('SECRET_KEY') or key
+  SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'sqlite:////config/mimir.db'
+  SQLALCHEMY_TRACK_MODIFICATIONS = False

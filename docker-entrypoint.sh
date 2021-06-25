@@ -3,4 +3,4 @@ set -euo pipefail
 
 flask db upgrade
 
-echo "Starting "
+echo "Starting mimir"

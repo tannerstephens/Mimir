@@ -1,4 +1,5 @@
 from flask import Flask
+from logging import getLogger
 
 from .extensions import (
   crontab,
@@ -23,3 +24,8 @@ def register_extensions(app: Flask):
   crontab.init_app(app)
   db.init_app(app)
   migrate.init_app(app, db)
+
+def register_gunicorn_logger(app: Flask):
+  gunicorn_logger = getLogger('gunicorn.error')
+  app.logger.handlers = gunicorn_logger.handlers
+  app.logger.setLevel(gunicorn_logger.level)
