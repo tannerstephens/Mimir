@@ -36,4 +36,4 @@ RUN flask crontab add
 EXPOSE 8000
 VOLUME /config
 ENTRYPOINT ["gunicorn"]
-CMD ["--bind", "0.0.0.0:8000", "-w", "4", "mimir:create_app()"]
+CMD ["--bind", "0.0.0.0:80", "-w", "4", "mimir:create_app()"]
