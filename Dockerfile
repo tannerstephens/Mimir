@@ -26,9 +26,11 @@ RUN useradd --create-home appuser
 RUN mkdir /config
 RUN chown -R appuser:appuser /config
 WORKDIR /home/appuser
-USER appuser
 
 COPY . .
+RUN chown -R appuser:appuser .
+
+USER appuser
 
 RUN flask db upgrade
 RUN flask crontab add
