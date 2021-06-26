@@ -16,6 +16,8 @@ RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 
 FROM base AS runtime
 
+RUN apt-get update && apt-get -y install cron
+
 COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
 ENV FLASK_APP=mimir:create_app
