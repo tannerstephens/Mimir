@@ -33,7 +33,7 @@ COPY . .
 RUN flask db upgrade
 RUN flask crontab add
 
-EXPOSE 8000
+EXPOSE 80
 VOLUME /config
 ENTRYPOINT ["gunicorn"]
 CMD ["--bind", "0.0.0.0:80", "-w", "4", "mimir:create_app()"]
