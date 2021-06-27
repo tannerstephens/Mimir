@@ -23,9 +23,6 @@ def fetch_diamond_releases(date_string=None):
       highres_image_url_format=HIGHRES_IMAGE_URL_FORMAT,
       series_url_format=SERIES_URL_FORMAT).save(False)
 
-  current_app.logger.info('Fetching latest diamond releases')
-  print('Fetching latest diamond releases')
-
   session = requests.session()
 
   extra = ''
@@ -43,6 +40,9 @@ def fetch_diamond_releases(date_string=None):
     current_app.logger.info('No new releases yet')
     print(f'No new releases yet for {release_date_text}')
     return
+
+  current_app.logger.info(f'Fetching latest diamond releases for {release_date_text}')
+  print(f'Fetching latest diamond releases for {release_date_text}')
 
   release_date_model = ReleaseDate(date=release_date)
 

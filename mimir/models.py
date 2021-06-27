@@ -67,5 +67,6 @@ class Release(Model):
       'series_id': self.series_id,
       'distributor_id': self.distributor_id,
       'highres_image_url': self.distributor.highres_image_url_format.format(image_id=self.image_id),
-      'lowres_image_url': self.distributor.lowres_image_url_format.format(image_id=self.image_id)
+      'lowres_image_url': self.distributor.lowres_image_url_format.format(image_id=self.image_id),
+      'release_date': self.release_date.date.strftime('%Y-%m-%d')
     }
