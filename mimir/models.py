@@ -24,6 +24,11 @@ class Model(db.Model):
     return commit and db.session.commit()
 
 
+class ReleaseDate(Model):
+  date = Column(db.DateTime, unique=False, nullable=False)
+  distributor_id = Column(db.Integer, db.ForeignKey('distributor.id'), nullable=True)
+
+
 class Distributor(Model):
   name = Column(db.String, unique=True, nullable=False)
   releases = relationship('Release', backref='distributor', lazy=True)
@@ -31,6 +36,7 @@ class Distributor(Model):
   highres_image_url_format = Column(db.String, unique=False, nullable=True)
   series_url_format = Column(db.String, unique=False, nullable=True)
   last_release = Column(db.DateTime, unique=False, nullable=True)
+  release_dates = relationship('ReleaseDate', backref='distributor', lazy=True)
 
 
 class Publisher(Model):

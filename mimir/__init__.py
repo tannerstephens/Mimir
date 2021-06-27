@@ -9,6 +9,7 @@ from .extensions import (
 
 from .views import register_views
 from .cronjobs import register_cronjobs
+from .commands import register_commands
 
 def create_app(config='mimir.config.Config'):
   app = Flask(__name__)
@@ -17,6 +18,7 @@ def create_app(config='mimir.config.Config'):
   register_extensions(app)
   register_views(app)
   register_cronjobs()
+  register_commands(app)
 
   return app
 

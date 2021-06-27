@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from flask import current_app
 from html import unescape
 
-from ..models import Distributor, Publisher, Series, Release, db_commit
+from ..models import Distributor, Publisher, Series, Release, ReleaseDate, db_commit
 
 import requests
 
@@ -13,7 +13,7 @@ LOWRES_IMAGE_URL_FORMAT = 'https://www.previewsworld.com/SiteImage/CatalogThumbn
 HIGHRES_IMAGE_URL_FORMAT = 'https://www.previewsworld.com/SiteImage/MainImage/{image_id}'
 SERIES_URL_FORMAT = 'https://www.previewsworld.com/Catalog/Series/{series_id}'
 
-def fetch_diamond_releases():
+def fetch_diamond_releases(date_string=None):
   distributorModel = Distributor.query.filter_by(name=DISTRIBUTOR_NAME).first()
 
   if distributorModel is None:
@@ -28,16 +28,20 @@ def fetch_diamond_releases():
 
   session = requests.session()
 
-  all_new_releases_text = session.get(f'{PREVIEWS_WORLD_BASE_URL}/NewReleases').text
+  extra = ''
+
+  if date_string:
+    extra = f'?releaseDate={date_string}'
+
+  all_new_releases_text = session.get(f'{PREVIEWS_WORLD_BASE_URL}/NewReleases' + extra).text
   all_new_releases_soup = BeautifulSoup(all_new_releases_text, 'html.parser')
 
   release_date_text = all_new_releases_soup.find('div', {'class': 'nrCurDate'}).contents[1]
   release_date = datetime.strptime(release_date_text, '%B %d, %Y')
 
-  if(distributorModel.last_release != None and distributorModel.last_release >= release_date):
+  if(ReleaseDate.query.filter_by(date=release_date).first() is not None):
     current_app.logger.info('No new releases yet')
-    print('No new releases yet')
-
+    print(f'No new releases yet for {release_date_text}')
     return
 
   new_releases_soup = all_new_releases_soup.find_all('div', {'class': 'nrGalleryItem'})
@@ -83,7 +87,7 @@ def fetch_diamond_releases():
       series=seriesModel,
       distributor=distributorModel).save(False)
 
-  distributorModel.last_release = release_date
+  distributorModel.release_dates.append(ReleaseDate(date=release_date))
   distributorModel.save()
 
   db_commit()
