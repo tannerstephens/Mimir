@@ -5,7 +5,7 @@ from html import unescape
 
 from ..models import Distributor, Publisher, Series, Release, db_commit
 
-import requests_cache
+import requests
 
 DISTRIBUTOR_NAME = 'Diamond Comic Distributors'
 PREVIEWS_WORLD_BASE_URL = 'https://www.previewsworld.com'
@@ -24,11 +24,22 @@ def fetch_diamond_releases():
       series_url_format=SERIES_URL_FORMAT).save(False)
 
   current_app.logger.info('Fetching latest diamond releases')
+  print('Fetching latest diamond releases')
 
-  session = requests_cache.CachedSession('.cache/previewsWorld.sqlite', expire_after=timedelta(weeks=1))
+  session = requests.session()
 
   all_new_releases_text = session.get(f'{PREVIEWS_WORLD_BASE_URL}/NewReleases').text
   all_new_releases_soup = BeautifulSoup(all_new_releases_text, 'html.parser')
+
+  release_date_text = all_new_releases_soup.find('div', {'class': 'nrCurDate'}).contents[1]
+  release_date = datetime.strptime(release_date_text, '%B %d, %Y')
+
+  if(distributorModel.last_release != None and distributorModel.last_release >= release_date):
+    current_app.logger.info('No new releases yet')
+    print('No new releases yet')
+
+    return
+
   new_releases_soup = all_new_releases_soup.find_all('div', {'class': 'nrGalleryItem'})
 
   for new_release_soup in new_releases_soup:
@@ -72,7 +83,7 @@ def fetch_diamond_releases():
       series=seriesModel,
       distributor=distributorModel).save(False)
 
-  distributorModel.last_release = datetime.now()
+  distributorModel.last_release = release_date
   distributorModel.save()
 
   db_commit()
