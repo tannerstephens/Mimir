@@ -49,6 +49,14 @@ class Series(Model):
   series_id = Column(db.String, unique=True, nullable=False)
   releases = relationship('Release', backref='series', lazy=True)
 
+  def serialize(self):
+    return {
+      'title': self.title,
+      'release_count': len(self.releases),
+      'id': self.id,
+      'series_id': self.series_id
+    }
+
 
 class Release(Model):
   title = Column(db.String, unique=False, nullable=False)
