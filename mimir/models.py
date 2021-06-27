@@ -1,3 +1,4 @@
+from enum import unique
 from .extensions import db
 
 Column = db.Column
@@ -28,6 +29,7 @@ class Distributor(Model):
   lowres_image_url_format = Column(db.String, unique=False, nullable=True)
   highres_image_url_format = Column(db.String, unique=False, nullable=True)
   series_url_format = Column(db.String, unique=False, nullable=True)
+  last_release = Column(db.DateTime, unique=False, nullable=False)
 
 
 class Publisher(Model):

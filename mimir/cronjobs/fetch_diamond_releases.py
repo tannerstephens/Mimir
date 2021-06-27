@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from datetime import timedelta
+from datetime import datetime, timedelta
 from flask import current_app
 from html import unescape
 
@@ -71,5 +71,8 @@ def fetch_diamond_releases():
       release_id=release_id,
       series=seriesModel,
       distributor=distributorModel).save(False)
+
+  distributorModel.last_release = datetime.now()
+  distributorModel.save()
 
   db_commit()
