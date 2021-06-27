@@ -44,6 +44,8 @@ def fetch_diamond_releases(date_string=None):
     print(f'No new releases yet for {release_date_text}')
     return
 
+  release_date_model = ReleaseDate(date=release_date)
+
   new_releases_soup = all_new_releases_soup.find_all('div', {'class': 'nrGalleryItem'})
 
   for new_release_soup in new_releases_soup:
@@ -85,9 +87,10 @@ def fetch_diamond_releases(date_string=None):
       publisher=publisherModel,
       release_id=release_id,
       series=seriesModel,
-      distributor=distributorModel).save(False)
+      distributor=distributorModel,
+      release_date=release_date_model).save(False)
 
-  distributorModel.release_dates.append(ReleaseDate(date=release_date))
-  distributorModel.save()
+  distributorModel.release_dates.append(release_date_model)
+  distributorModel.save(False)
 
   db_commit()

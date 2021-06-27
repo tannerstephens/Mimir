@@ -27,6 +27,7 @@ class Model(db.Model):
 class ReleaseDate(Model):
   date = Column(db.DateTime, unique=False, nullable=False)
   distributor_id = Column(db.Integer, db.ForeignKey('distributor.id'), nullable=True)
+  releases = relationship('Release', backref='release_date', lazy=True)
 
 
 class Distributor(Model):
@@ -35,7 +36,6 @@ class Distributor(Model):
   lowres_image_url_format = Column(db.String, unique=False, nullable=True)
   highres_image_url_format = Column(db.String, unique=False, nullable=True)
   series_url_format = Column(db.String, unique=False, nullable=True)
-  last_release = Column(db.DateTime, unique=False, nullable=True)
   release_dates = relationship('ReleaseDate', backref='distributor', lazy=True)
 
 
@@ -57,6 +57,7 @@ class Release(Model):
   release_id = Column(db.String, unique=False, nullable=False)
   series_id = Column(db.Integer, db.ForeignKey('series.id'), nullable=True)
   distributor_id = Column(db.Integer, db.ForeignKey('distributor.id'), nullable=True)
+  releasedate_id = Column(db.Integer, db.ForeignKey('release_date.id'), nullable=True)
 
   def serialize(self):
     return {
